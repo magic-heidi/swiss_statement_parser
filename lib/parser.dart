@@ -47,8 +47,13 @@ class StatementParser {
     }).toList();
   }
 
-  static List<Statement> fromFile(Uint8List bytes) {
+  static List<Statement> fromExcel(Uint8List bytes) {
     final rows = decodeXLSX(bytes);
+    return StatementParser.parseRows(rows);
+  }
+
+  static List<Statement> fromCSV(Uint8List bytes) {
+    final rows = decodeCSV(bytes);
     return StatementParser.parseRows(rows);
   }
 }

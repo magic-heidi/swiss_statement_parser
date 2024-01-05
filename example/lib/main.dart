@@ -6,7 +6,7 @@ void main() {
   var file = 'assets/ops.xlsx';
   final bytes = File(file).readAsBytesSync();
 
-  final list = StatementParser.fromFile(bytes);
+  final list = StatementParser.fromExcel(bytes);
 
   print(list.length);
   print('${list.first.textParts}\n ${list.first.amounts}\n${list.first.dates}');

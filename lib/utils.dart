@@ -1,5 +1,7 @@
+import 'dart:convert';
 import 'dart:typed_data';
 
+import 'package:csv/csv.dart';
 import 'package:intl/intl.dart';
 import 'package:spreadsheet_decoder/spreadsheet_decoder.dart';
 import 'package:swiss_statement_parser/models.dart';
@@ -14,6 +16,11 @@ import 'package:swiss_statement_parser/models.dart';
 Iterable<StatementRow> decodeXLSX(Uint8List bytes) {
   final excel = SpreadsheetDecoder.decodeBytes(bytes);
   return excel.tables.values.expand((e) => e.rows);
+}
+
+Iterable<StatementRow> decodeCSV(Uint8List bytes) {
+  const csv = CsvToListConverter();
+  return csv.convert(utf8.decode(bytes));
 }
 
 class PatternMatcher {
