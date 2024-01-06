@@ -1,3 +1,5 @@
+import 'dart:developer';
+
 import 'package:swiss_statement_parser/utils.dart';
 
 typedef StatementRow = Iterable<dynamic>;
@@ -18,25 +20,37 @@ class Statement {
   }
 
   /// Matches statement with provided data
+  ///
+  /// [texts] is matched any item in the list matches with model list items
+  ///
+  /// [amount] is matched with exact values
+  ///
+  /// [date] is matched when statement dates are in the future in comparison to input date
   bool match({
-    List<String> texts = const [],
-    List<double> amounts = const [],
-    List<DateTime> dates = const [],
+    required List<String> texts,
+    required double amount,
+    required DateTime date,
+    bool debug = false,
   }) {
+    // Normalize input date
+    final inputDate = DateTime(date.year, date.month, date.day);
+    final inputTexts = texts.map((e) => e.toLowerCase());
+    final modelTexts = textParts.map((e) => e.toLowerCase());
+
     // Match texts
-    final textsMatched = PatternMatcher.matchLists(
-      texts.map((e) => e.toLowerCase()),
-      textParts.map((e) => e.toLowerCase()),
-    );
+    final textsMatched = PatternMatcher.matchLists(inputTexts, modelTexts);
 
-    final amountsMatched = PatternMatcher.matchLists(amounts, this.amounts);
+    // Match amount
+    final amountMatched = amounts.any((value) => value == amount);
 
-    final datesMatched = PatternMatcher.matchLists(
-      // Reset input datetime
-      dates.map((e) => DateTime(e.year, e.month, e.day)),
-      this.dates,
-    );
+    final dateMatched = dates.any((date) => date.difference(inputDate).inDays >= 0);
 
-    return textsMatched && amountsMatched && datesMatched;
+    if (debug) {
+      log('texts:\ninput: $inputTexts\nmodel: ${modelTexts.toString()}\nmatched: $textsMatched');
+      log('amounts:\ninput: $amount\nmodel: $amounts\nmatched: $amountMatched');
+      log('dates:\ninput: $inputDate\nmodel: $dates\nmatched: $dateMatched');
+    }
+
+    return textsMatched && amountMatched && dateMatched;
   }
 }

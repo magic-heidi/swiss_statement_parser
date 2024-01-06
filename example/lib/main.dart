@@ -1,21 +1,18 @@
+import 'dart:developer';
 import 'dart:io';
 
 import 'package:swiss_statement_parser/index.dart';
 
 void main() {
-  var file = 'assets/ops.xlsx';
-  final bytes = File(file).readAsBytesSync();
-
-  final list = StatementParser.fromExcel(bytes);
-
-  print(list.length);
-  print('${list.first.textParts}\n ${list.first.amounts}\n${list.first.dates}');
-
-  final matches = list.first.match(
-    texts: ['gland', 'carte'],
-    amounts: [100],
-    dates: [DateTime(2023, 12, 31)],
+  final list = StatementParser.fromCSV(
+    File('assets/booking.csv').readAsBytesSync(),
   );
 
-  print('matches: $matches');
+  final matches = list.any((item) => item.match(
+        texts: ['Clearing', 'payment', 'jargon', 'values', 'hello world'],
+        amount: 3377.05,
+        date: DateTime(2024, 1, 5),
+      ));
+
+  log('matches $matches');
 }
