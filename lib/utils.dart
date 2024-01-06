@@ -20,7 +20,7 @@ Iterable<StatementRow> decodeXLSX(Uint8List bytes) {
 
 Iterable<StatementRow> decodeCSV(Uint8List bytes) {
   const csv = CsvToListConverter();
-  return csv.convert(utf8.decode(bytes));
+  return csv.convert(utf8.decode(bytes), eol: '\n');
 }
 
 class PatternMatcher {
