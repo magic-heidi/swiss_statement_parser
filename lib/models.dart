@@ -31,7 +31,11 @@ class Statement {
 
     final amountsMatched = PatternMatcher.matchLists(amounts, this.amounts);
 
-    final datesMatched = PatternMatcher.matchLists(dates, this.dates);
+    final datesMatched = PatternMatcher.matchLists(
+      // Reset input datetime
+      dates.map((e) => DateTime(e.year, e.month, e.day)),
+      this.dates,
+    );
 
     return textsMatched && amountsMatched && datesMatched;
   }
