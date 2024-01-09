@@ -32,10 +32,16 @@ class Statement {
     required DateTime date,
     bool debug = false,
   }) {
+    Iterable<String> normalizeTexts(Iterable<String> input) {
+      final value = input.map((e) => e.toLowerCase().trim().replaceAll(RegExp(r'[^\w\s]+'), '')).where((e) => e.isNotEmpty);
+
+      return value;
+    }
+
     // Normalize input date
     final inputDate = DateTime(date.year, date.month, date.day);
-    final inputTexts = texts.map((e) => e.toLowerCase().trim()).expand((e) => e.split(',')).toList();
-    final modelTexts = textParts.map((e) => e.toLowerCase().trim()).expand((e) => e.split(',')).toList();
+    final inputTexts = normalizeTexts(texts);
+    final modelTexts = normalizeTexts(textParts);
 
     // Match texts
     final textsMatched = PatternMatcher.matchLists(inputTexts, modelTexts);
@@ -47,7 +53,7 @@ class Statement {
 
     if (debug) {
       log('-------');
-      log('texts:\ninput: $inputTexts\nmodel: ${modelTexts.toString()}\nmatched: $textsMatched');
+      log('texts:\ninput: $inputTexts\nmodel: $modelTexts\nmatched: $textsMatched');
       log('amounts:\ninput: $amount\nmodel: $amounts\nmatched: $amountMatched');
       log('dates:\ninput: $inputDate\nmodel: $dates\nmatched: $dateMatched');
     }
