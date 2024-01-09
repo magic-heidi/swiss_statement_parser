@@ -34,8 +34,8 @@ class Statement {
   }) {
     // Normalize input date
     final inputDate = DateTime(date.year, date.month, date.day);
-    final inputTexts = texts.map((e) => e.toLowerCase());
-    final modelTexts = textParts.map((e) => e.toLowerCase());
+    final inputTexts = texts.map((e) => e.toLowerCase().trim()).expand((e) => e.split(',')).toList();
+    final modelTexts = textParts.map((e) => e.toLowerCase().trim()).expand((e) => e.split(',')).toList();
 
     // Match texts
     final textsMatched = PatternMatcher.matchLists(inputTexts, modelTexts);
@@ -43,7 +43,7 @@ class Statement {
     // Match amount
     final amountMatched = amounts.any((value) => value == amount);
 
-    final dateMatched = dates.any((date) => date.difference(inputDate).inDays >= 0);
+    final dateMatched = dates.any((date) => inputDate.isAtSameMomentAs(date) || inputDate.isBefore(date));
 
     if (debug) {
       log('-------');
