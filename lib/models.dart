@@ -46,6 +46,7 @@ class Statement {
     final dateMatched = dates.any((date) => date.difference(inputDate).inDays >= 0);
 
     if (debug) {
+      log('-------');
       log('texts:\ninput: $inputTexts\nmodel: ${modelTexts.toString()}\nmatched: $textsMatched');
       log('amounts:\ninput: $amount\nmodel: $amounts\nmatched: $amountMatched');
       log('dates:\ninput: $inputDate\nmodel: $dates\nmatched: $dateMatched');
