@@ -23,7 +23,7 @@ class Statement {
   ///
   /// [texts] is matched any item in the list matches with model list items
   ///
-  /// [amount] is matched with exact values
+  /// [amount] is matched with exact values. By default, amounts will be rounded down to nearest 5 cents
   ///
   /// [date] is matched when statement dates are in the future in comparison to input date
   bool match({
@@ -31,12 +31,16 @@ class Statement {
     required double amount,
     required DateTime date,
     bool debug = false,
+    double Function(double value)? roundAmount,
   }) {
     Iterable<String> normalizeTexts(Iterable<String> input) {
       final value = input.map((e) => e.toLowerCase().trim().replaceAll(RegExp(r'[^\w\s]+'), '')).where((e) => e.isNotEmpty);
 
       return value;
     }
+
+    // By default round down to nearest 5 cents
+    final round = roundAmount ?? (double value) => (value * 20).floor() / 20;
 
     // Normalize input date
     final inputDate = DateTime(date.year, date.month, date.day);
@@ -47,7 +51,7 @@ class Statement {
     final textsMatched = PatternMatcher.matchLists(inputTexts, modelTexts);
 
     // Match amount
-    final amountMatched = amounts.any((value) => value == amount);
+    final amountMatched = amounts.any((value) => round(value) == round(amount));
 
     final dateMatched = dates.any((date) => inputDate.isAtSameMomentAs(date) || inputDate.isBefore(date));
 
