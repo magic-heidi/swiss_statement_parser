@@ -3,6 +3,12 @@ import 'dart:io';
 import 'package:swiss_statement_parser/index.dart';
 import 'package:test/test.dart';
 
+logStatements(List<Statement> list) {
+  for (final item in list) {
+    print('--\n\nStatement:\namounts: ${item.amounts}\ndates: ${item.dates}\ntexts: ${item.texts}');
+  }
+}
+
 void main() {
   group('can parse excel', () {
     final list = StatementParser.fromExcel(
@@ -35,6 +41,8 @@ void main() {
       File('example/assets/booking.csv').readAsBytesSync(),
     );
 
+    logStatements(list);
+
     test('should match statement', () {
       final matches = list.any((item) => item.match(
             texts: ['Payment'],
@@ -53,6 +61,23 @@ void main() {
           ));
 
       expect(matches, false);
+    });
+
+    test('can parse csv with ; field delimeter', () {
+      final list = StatementParser.fromCSV(
+        File('example/assets/messy-file.csv').readAsBytesSync(),
+      );
+
+      final matches = list.any(
+        (item) => item.match(
+          texts: ['Reason'],
+          amount: 11657.0,
+          date: DateTime.parse('2023-06-13'),
+          debug: true,
+        ),
+      );
+
+      expect(matches, true);
     });
   });
 }

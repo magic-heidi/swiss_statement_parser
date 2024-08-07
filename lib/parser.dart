@@ -1,33 +1,24 @@
 import 'dart:typed_data';
 
 import 'package:collection/collection.dart';
+import 'package:datify/datify.dart';
 import 'package:swiss_statement_parser/models.dart';
 import 'package:swiss_statement_parser/utils.dart';
 
 class StatementParser {
   /// Checks if row is a valid statement
-  static isValidRow(List<dynamic> data) {
-    final index = data.indexWhere((value) {
+  static isValidRow(List<dynamic> row) {
+    return row.any((value) {
       if (value == null) return false;
-
-      final (date, isValid) = parseDate(value.toString());
-
-      return isValid;
+      return Datify.parse(value.toString()).date != null;
     });
-
-    return index >= 0;
   }
 
   static Statement parseItem(StatementRow row) {
     final texts = row.whereType<String>();
 
     final amounts = row.where((value) => value is int || value is double || value is num).map((e) => double.parse(e.toString()));
-
-    final dates = row.map((value) {
-      final (parsedDate, isValidDate) = parseDate(value.toString());
-
-      if (isValidDate) return parsedDate;
-    }).whereNotNull();
+    final dates = row.map((value) => Datify.parse(value.toString()).date).whereNotNull();
 
     return Statement(amounts: amounts.toList(), dates: dates.toList(), texts: texts.toList());
   }

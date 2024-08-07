@@ -81,6 +81,14 @@ packages:
       url: "https://pub.dev"
     source: hosted
     version: "1.0.8"
+  datify:
+    dependency: transitive
+    description:
+      name: datify
+      sha256: c564fab56be7b8c771bab9a9eb2d1db2d798c513bca44065832a9dafa45cd879
+      url: "https://pub.dev"
+    source: hosted
+    version: "1.1.5"
   equatable:
     dependency: transitive
     description:

@@ -12,6 +12,7 @@ void main() {
         texts: ['Clearing', 'payment', 'jargon', 'values', 'hello world'],
         amount: 3377.05,
         date: DateTime(2024, 1, 5),
+        debug: true,
       ));
 
   log('matches $matches');
