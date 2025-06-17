@@ -1,6 +1,6 @@
 name: swiss_statement_parser
 description: "Make sense out of swiss bank statements"
-version: 0.0.4
+version: 0.0.5
 homepage: magicheidi.ch
 
 environment:
