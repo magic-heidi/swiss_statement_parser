@@ -43,8 +43,8 @@ class StatementParser {
     return StatementParser.parseRows(rows);
   }
 
-  static List<Statement> fromCSV(Uint8List bytes) {
-    final rows = decodeCSV(bytes);
+  static Future<List<Statement>> fromCSV(Uint8List bytes) async {
+    final rows = await decodeCSV(bytes);
     return StatementParser.parseRows(rows);
   }
 }

@@ -3,8 +3,8 @@ import 'dart:io';
 
 import 'package:swiss_statement_parser/index.dart';
 
-void main() {
-  final list = StatementParser.fromCSV(
+void main() async {
+  final list = await StatementParser.fromCSV(
     File('assets/booking.csv').readAsBytesSync(),
   );
 

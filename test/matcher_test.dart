@@ -1,5 +1,6 @@
 import 'dart:io';
 
+import 'package:flutter_test/flutter_test.dart' show TestWidgetsFlutterBinding;
 import 'package:swiss_statement_parser/index.dart';
 import 'package:test/test.dart';
 
@@ -10,6 +11,8 @@ logStatements(List<Statement> list) {
 }
 
 void main() {
+  TestWidgetsFlutterBinding.ensureInitialized();
+
   group('can parse excel', () {
     final list = StatementParser.fromExcel(
       File('example/assets/ops.xlsx').readAsBytesSync(),
@@ -37,13 +40,15 @@ void main() {
   });
 
   group('can parse csv', () {
-    final list = StatementParser.fromCSV(
-      File('example/assets/booking.csv').readAsBytesSync(),
-    );
+    parseCSV(String path) => StatementParser.fromCSV(File(path).readAsBytesSync());
 
-    logStatements(list);
+    test('should match statement', () async {
+      final list = await StatementParser.fromCSV(
+        File('example/assets/booking.csv').readAsBytesSync(),
+      );
 
-    test('should match statement', () {
+      logStatements(list);
+
       final matches = list.any((item) => item.match(
             texts: ['Payment'],
             amount: 1338.75,
@@ -53,7 +58,11 @@ void main() {
       expect(matches, true);
     });
 
-    test('should not match statement', () {
+    test('should not match statement', () async {
+      final list = await StatementParser.fromCSV(
+        File('example/assets/booking.csv').readAsBytesSync(),
+      );
+
       final matches = list.any((item) => item.match(
             texts: ['Test', 'Company', 'AG'],
             amount: 100,
@@ -63,8 +72,8 @@ void main() {
       expect(matches, false);
     });
 
-    test('can parse csv with ; field delimeter', () {
-      final list = StatementParser.fromCSV(
+    test('can parse csv with ; field delimeter', () async {
+      final list = await StatementParser.fromCSV(
         File('example/assets/messy-file.csv').readAsBytesSync(),
       );
 
@@ -78,6 +87,10 @@ void main() {
       );
 
       expect(matches, true);
+    });
+
+    test('can parse different encoding', () async {
+      await parseCSV('example/assets/encoding-ansi.csv');
     });
   });
 }
