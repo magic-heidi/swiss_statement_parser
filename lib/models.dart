@@ -40,7 +40,7 @@ class Statement {
     }
 
     // By default round down to nearest 5 cents
-    final round = roundAmount ?? (double value) => (value * 20).floor() / 20;
+    final round = roundAmount ?? (double value) => (value * 20).round() / 20;
 
     // Normalize input date
     final inputDate = DateTime(date.year, date.month, date.day);
@@ -51,7 +51,11 @@ class Statement {
     final textsMatched = PatternMatcher.matchLists(inputTexts, modelTexts);
 
     // Match amount
-    final amountMatched = amounts.any((value) => round(value) == round(amount));
+    final amountMatched = amounts.any((v) =>
+      round(v) == round(amount)
+    );
+
+
 
     final dateMatched = dates.any((date) => inputDate.isAtSameMomentAs(date) || inputDate.isBefore(date));
 
