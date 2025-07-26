@@ -42,13 +42,10 @@ void main() {
   group('can parse csv', () {
     parseCSV(String path) => StatementParser.fromCSV(File(path).readAsBytesSync());
 
-    test('should match statement', () async {
-      final list = await StatementParser.fromCSV(
-        File('example/assets/booking.csv').readAsBytesSync(),
-      );
+    final list = parseCSV('example/assets/booking.csv');
+    logStatements(list);
 
-      logStatements(list);
-
+    test('should match statement', () {
       final matches = list.any((item) => item.match(
             texts: ['Payment'],
             amount: 1338.75,
@@ -58,11 +55,7 @@ void main() {
       expect(matches, true);
     });
 
-    test('should not match statement', () async {
-      final list = await StatementParser.fromCSV(
-        File('example/assets/booking.csv').readAsBytesSync(),
-      );
-
+    test('should not match statement', () {
       final matches = list.any((item) => item.match(
             texts: ['Test', 'Company', 'AG'],
             amount: 100,
@@ -72,8 +65,8 @@ void main() {
       expect(matches, false);
     });
 
-    test('can parse csv with ; field delimeter', () async {
-      final list = await StatementParser.fromCSV(
+    test('can parse csv with ; field delimeter', () {
+      final list = StatementParser.fromCSV(
         File('example/assets/messy-file.csv').readAsBytesSync(),
       );
 
@@ -89,8 +82,8 @@ void main() {
       expect(matches, true);
     });
 
-    test('can parse different encoding', () async {
-      await parseCSV('example/assets/encoding-ansi.csv');
+    test('can parse different encoding', () {
+      parseCSV('example/assets/encoding-ansi.csv');
     });
   });
 }

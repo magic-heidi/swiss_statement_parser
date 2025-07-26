@@ -1,11 +1,9 @@
 import 'dart:convert';
-import 'dart:io' show Platform;
 
 import 'package:charset/charset.dart';
 import 'package:collection/collection.dart';
 import 'package:csv/csv.dart';
 import 'package:flutter/foundation.dart';
-import 'package:flutter_charset_detector/flutter_charset_detector.dart';
 import 'package:spreadsheet_decoder/spreadsheet_decoder.dart';
 import 'package:swiss_statement_parser/models.dart';
 
@@ -16,31 +14,18 @@ Iterable<StatementRow> decodeXLSX(Uint8List bytes) {
 
 bool isSingleColumnCSV(List<List<dynamic>> data) => !data.any((row) => row.length > 1);
 
-Future<Iterable<StatementRow>> decodeCSV(Uint8List bytes) async {
+Iterable<StatementRow> decodeCSV(Uint8List bytes) {
   String? input;
 
   // Decode bytes
   {
-    if (!kIsWeb && Platform.isWindows) {
-      final encoders = [
-        utf8,
-        windows1252,
-        ascii,
-        latin1,
-      ];
+    final encoders = [utf8, windows1252, ascii, latin1, utf16];
 
-      for (final encoder in encoders) {
-        try {
-          input = encoder.decode(bytes);
-          break;
-        } catch (_) {}
-      }
-    }
-
-    // Auto detect file type
-    else {
-      final result = await CharsetDetector.autoDecode(bytes);
-      input = result.string;
+    for (final encoder in encoders) {
+      try {
+        input = encoder.decode(bytes);
+        break;
+      } catch (_) {}
     }
 
     if (input == null) throw Exception('Failed to decode given bytes');
