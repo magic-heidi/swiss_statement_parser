@@ -18,7 +18,7 @@ class StatementParser {
     final texts = row.whereType<String>();
 
     final amounts = row.where((value) => value is int || value is double || value is num).map((e) => double.parse(e.toString()));
-    final dates = row.map((value) => Datify.parse(value.toString()).date).whereNotNull();
+    final dates = row.map((value) => Datify.parse(value.toString()).date).nonNulls;
 
     return Statement(amounts: amounts.toList(), dates: dates.toList(), texts: texts.toList());
   }
