@@ -7,7 +7,7 @@ import 'package:swiss_statement_parser/utils.dart';
 
 class StatementParser {
   /// Checks if row is a valid statement
-  static isValidRow(List<dynamic> row) {
+  static bool isValidRow(List<dynamic> row) {
     return row.any((value) {
       if (value == null) return false;
       return Datify.parse(value.toString()).date != null;
@@ -17,8 +17,12 @@ class StatementParser {
   static Statement parseItem(StatementRow row) {
     final texts = row.whereType<String>();
 
-    final amounts = row.where((value) => value is int || value is double || value is num).map((e) => double.parse(e.toString()));
-    final dates = row.map((value) => Datify.parse(value.toString()).date).nonNulls;
+    final amounts = [
+      for (final value in row)
+        if (value is int || value is double || value is num) double.parse(value.toString())
+    ];
+
+    final dates = [for (final value in row) Datify.parse(value.toString()).date].nonNulls;
 
     return Statement(amounts: amounts.toList(), dates: dates.toList(), texts: texts.toList());
   }

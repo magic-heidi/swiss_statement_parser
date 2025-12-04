@@ -12,8 +12,6 @@ Iterable<StatementRow> decodeXLSX(Uint8List bytes) {
   return excel.tables.values.expand((e) => e.rows);
 }
 
-bool isSingleColumnCSV(List<List<dynamic>> data) => !data.any((row) => row.length > 1);
-
 Iterable<StatementRow> decodeCSV(Uint8List bytes) {
   String? input;
 
@@ -32,21 +30,10 @@ Iterable<StatementRow> decodeCSV(Uint8List bytes) {
   }
 
   var data = const CsvToListConverter().convert(
-    input,
+    utf8.decode(bytes).replaceAll(';;', ';').replaceAll(';', ','),
     eol: '\n',
+    fieldDelimiter: ',',
   );
-
-  // Parse legacy CSV
-  // If file is ; separated all rows will have one column
-  if (isSingleColumnCSV(data)) {
-    final result = const CsvToListConverter().convert(
-      utf8.decode(bytes).replaceAll(';;', ';'),
-      eol: '\n',
-      fieldDelimiter: ';',
-    );
-
-    if (result.isNotEmpty && !isSingleColumnCSV(result)) data = result;
-  }
 
   // Cleanup data
   data.forEachIndexed((index, row) {
